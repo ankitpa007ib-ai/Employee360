@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f4f7f1">
+  <title>Employee360 | IB Group</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <style>
+    :root {
+      font-family: "DM Sans", sans-serif;
+      color: #1b2b26;
+      background: #f4f7f1;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      --ink: #1b2b26;
+      --muted: #718078;
+      --green: #146c52;
+      --green-dark: #0e4e3d;
+      --mint: #e2efe8;
+      --line: #e1e8e2;
+      --surface: #fff;
+      --coral: #e87255;
+      --yellow: #f4d45a;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; min-height: 100vh; min-height: 100dvh; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible { outline: 3px solid #e8725588; outline-offset: 3px; }
+    .shell { min-height: 100vh; }
+    .login-page { display: grid; grid-template-columns: minmax(360px, 1fr) minmax(400px, 0.9fr); min-height: 100vh; padding: 28px; gap: 28px; }
+    .brand-panel { position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; min-height: 670px; padding: clamp(30px, 5vw, 72px); color: #f9fff9; background: #145a46; border-radius: 6px; }
+    .brand-panel::before { content: ""; position: absolute; width: 430px; height: 430px; right: -138px; bottom: -132px; border: 1px solid #ffffff24; border-radius: 50%; box-shadow: 0 0 0 40px #ffffff08, 0 0 0 82px #ffffff06; }
+    .brand-panel::after { content: ""; position: absolute; width: 12px; height: 112px; top: 33%; right: 15%; background: var(--yellow); transform: rotate(38deg); }
+    .brand-lockup, .topbar-brand { display: flex; align-items: center; gap: 13px; position: relative; z-index: 1; }
+    .brand-mark { position: relative; flex: 0 0 44px; width: 44px; height: 44px; overflow: hidden; background: #fff; border-radius: 50%; }
+    .brand-mark img { position: absolute; top: 50%; left: 50%; width: 146%; height: 146%; max-width: none; object-fit: cover; transform: translate(-50%, -50%); }
+    .brand-name { font-family: Manrope, sans-serif; font-size: 15px; font-weight: 800; line-height: 1.15; }
+    .brand-sub { display: block; margin-top: 4px; color: #b7d2c5; font-size: 10px; font-weight: 600; letter-spacing: 1.4px; }
+    .brand-copy { position: relative; z-index: 1; max-width: 560px; margin: auto 0; padding: 60px 0; }
+    .eyebrow { color: #d7e8dd; font-size: 11px; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; }
+    h1, h2, h3, p { margin-top: 0; }
+    .brand-copy h1 { max-width: 500px; margin: 20px 0; font-family: Manrope, sans-serif; font-size: clamp(42px, 5vw, 68px); font-weight: 600; line-height: 1.04; letter-spacing: 0; }
+    .brand-copy p { max-width: 420px; margin: 0; color: #cee0d5; font-size: 16px; line-height: 1.7; }
+    .brand-foot { position: relative; z-index: 1; color: #b7d2c5; font-size: 12px; }
+    .login-side { display: grid; place-items: center; padding: 32px; }
+    .login-card { width: min(100%, 430px); padding: 32px 0; }
+    .mobile-brand { display: none; }
+    .form-kicker { margin-bottom: 12px; color: var(--green); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+    .login-card h2 { margin-bottom: 10px; font-family: Manrope, sans-serif; font-size: 34px; font-weight: 700; letter-spacing: 0; }
+    .form-intro { margin-bottom: 34px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .field { margin-bottom: 20px; }
+    .field label { display: flex; justify-content: space-between; margin-bottom: 8px; color: #33423b; font-size: 12px; font-weight: 700; }
+    .field-hint { color: #89968f; font-size: 11px; font-weight: 500; }
+    .input-wrap { position: relative; }
+    .field input { width: 100%; height: 52px; padding: 0 14px; color: var(--ink); background: #fff; border: 1px solid #dce5de; border-radius: 3px; }
+    .field input::placeholder { color: #a4aea8; }
+    .password-input { padding-right: 64px !important; }
+    .show-password { position: absolute; top: 50%; right: 10px; padding: 7px; color: var(--green); background: transparent; border: 0; transform: translateY(-50%); font-size: 11px; font-weight: 700; }
+    .primary-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 52px; margin-top: 8px; padding: 12px 18px; color: #fff; background: var(--green); border: 0; border-radius: 3px; font-size: 13px; font-weight: 700; transition: background .2s, transform .2s; }
+    .primary-btn:hover:not(:disabled) { background: var(--green-dark); transform: translateY(-1px); }
+    .primary-btn:disabled { cursor: not-allowed; opacity: .46; }
+    .arrow { font-size: 18px; line-height: 1; }
+    .privacy-note { display: flex; align-items: flex-start; gap: 10px; margin-top: 25px; padding: 14px; color: #64736a; background: #eaf1eb; font-size: 11px; line-height: 1.55; }
+    .privacy-dot { flex: 0 0 7px; height: 7px; margin-top: 4px; background: var(--coral); border-radius: 50%; }
+    .error-message { margin: 0 0 15px; color: #b34730; font-size: 12px; }
+    .app-layout { min-height: 100vh; min-height: 100dvh; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; height: 76px; padding: 0 clamp(20px, 4vw, 62px); background: #fff; border-bottom: 1px solid var(--line); }
+    .topbar .brand-mark { flex-basis: 38px; width: 38px; height: 38px; }
+    .topbar .brand-name { font-size: 13px; }
+    .topbar .brand-sub { color: #839087; font-size: 9px; }
+    .profile { display: flex; align-items: center; gap: 10px; }
+    .avatar { display: grid; place-items: center; width: 36px; aspect-ratio: 1; color: var(--green-dark); background: var(--mint); border-radius: 50%; font-size: 12px; font-weight: 700; }
+    .profile-name { font-size: 12px; font-weight: 700; }
+    .profile-role { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; font-weight: 500; }
+    .workspace { display: grid; grid-template-columns: 220px minmax(0, 1fr); max-width: 1440px; min-height: calc(100vh - 76px); margin: 0 auto; padding: 30px clamp(20px, 4vw, 62px) 60px; gap: clamp(30px, 5vw, 74px); }
+    .sidebar { padding-top: 14px; }
+    .side-label { margin: 0 0 15px 12px; color: #8a968e; font-size: 10px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; }
+    .side-link { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 42px; margin: 4px 0; padding: 0 12px; color: #6a7970; background: transparent; border: 0; border-radius: 3px; text-align: left; font-size: 12px; font-weight: 600; }
+    .side-link.active { color: var(--green-dark); background: var(--mint); }
+    .side-icon { display: grid; place-items: center; width: 18px; height: 18px; font-size: 15px; }
+    .side-note { margin-top: 36px; padding: 16px 14px; border-left: 2px solid var(--coral); color: #78857d; font-size: 11px; line-height: 1.6; }
+    .main-content { width: 100%; max-width: 890px; }
+    .welcome-row { display: flex; align-items: flex-end; justify-content: space-between; margin: 13px 0 29px; gap: 20px; }
+    .welcome-row h1 { margin: 0 0 7px; font-family: Manrope, sans-serif; font-size: clamp(28px, 3vw, 38px); line-height: 1.15; letter-spacing: 0; }
+    .welcome-row p { margin: 0; color: var(--muted); font-size: 13px; }
+    .date-label { padding-bottom: 4px; color: #728078; font-size: 11px; }
+    .assessment-banner { position: relative; display: grid; grid-template-columns: 1fr 170px; min-height: 236px; overflow: hidden; background: #e5eee7; border-radius: 4px; }
+    .banner-copy { position: relative; z-index: 1; padding: 32px 36px; }
+    .banner-label { color: var(--green); font-size: 10px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; }
+    .banner-copy h2 { max-width: 420px; margin: 12px 0 8px; font-family: Manrope, sans-serif; font-size: 25px; line-height: 1.25; letter-spacing: 0; }
+    .banner-copy p { max-width: 470px; margin: 0 0 22px; color: #66776c; font-size: 12px; line-height: 1.6; }
+    .start-btn { display: inline-flex; align-items: center; gap: 12px; min-height: 42px; padding: 0 16px; color: #fff; background: var(--green); border: 0; border-radius: 3px; font-size: 11px; font-weight: 700; }
+    .start-btn:hover { background: var(--green-dark); }
+    .banner-art { position: relative; display: grid; place-items: center; }
+    .art-disc { position: relative; display: grid; place-items: center; width: 136px; aspect-ratio: 1; color: var(--green-dark); background: var(--yellow); border-radius: 50%; font-family: Manrope, sans-serif; font-size: 44px; font-weight: 800; }
+    .art-disc::after { content: ""; position: absolute; inset: -14px; border: 1px solid #146c5240; border-radius: 50%; }
+    .art-stem { position: absolute; width: 8px; height: 70px; top: 36px; right: 20px; background: var(--coral); transform: rotate(35deg); }
+    .value-section { margin-top: 36px; }
+    .section-heading { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 17px; }
+    .section-heading h3 { margin: 0; font-family: Manrope, sans-serif; font-size: 15px; letter-spacing: 0; }
+    .section-heading span { color: var(--muted); font-size: 10px; }
+    .value-list { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); background: #fff; }
+    .value-item { display: flex; align-items: center; min-height: 75px; padding: 16px; gap: 12px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .value-number { display: grid; place-items: center; flex: 0 0 30px; width: 30px; aspect-ratio: 1; color: var(--green); background: var(--mint); border-radius: 50%; font-size: 10px; font-weight: 700; }
+    .value-title { font-size: 11px; font-weight: 700; }
+    .workflow-section { margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); }
+    .cycle-form, .plan-form { display: grid; grid-template-columns: minmax(180px, 1.5fr) repeat(2, minmax(140px, 1fr)) auto; align-items: end; gap: 12px; }
+    .plan-form { grid-template-columns: minmax(150px, .7fr) minmax(220px, 2fr) minmax(145px, .8fr) auto; margin: 18px 0 22px; }
+    .cycle-form label, .plan-form label, .inline-field, .comment-field { display: grid; gap: 7px; color: #33423b; font-size: 11px; font-weight: 700; }
+    .cycle-form input, .plan-form input, .plan-form select, .inline-field select, .plan-form textarea, .comment-field textarea { width: 100%; min-height: 42px; padding: 9px 11px; color: var(--ink); background: #fff; border: 1px solid #dce5de; border-radius: 3px; font-size: 12px; font-weight: 400; }
+    .plan-form textarea, .comment-field textarea { resize: vertical; }
+    .peer-selection { grid-column: 1 / -1; margin-top: 12px; }
+    .peer-subject { margin: 12px 0; padding: 12px 14px; border: 1px solid var(--line); }
+    .peer-subject legend { padding: 0 6px; color: var(--ink); font-size: 12px; font-weight: 700; }
+    .peer-subject legend span { margin-left: 8px; color: var(--muted); font-size: 10px; font-weight: 500; }
+    .peer-options { display: flex; flex-wrap: wrap; gap: 8px; }
+    .peer-options label { display: flex; align-items: flex-start; min-width: 175px; padding: 9px 10px; gap: 8px; color: #26342d; background: #f7faf6; border: 1px solid var(--line); font-size: 11px; font-weight: 500; }
+    .peer-options input { width: 16px; height: 16px; margin: 1px 0 0; accent-color: var(--green); }
+    .peer-options small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+    .peer-hint { margin: 9px 0 0; color: #815b1d; font-size: 10px; }
+    .inline-field { max-width: 320px; margin: 0 0 16px; }
+    .table-scroll { width: 100%; overflow-x: auto; }
+    .data-table { width: 100%; border-collapse: collapse; background: #fff; font-size: 12px; text-align: left; }
+    .data-table th { padding: 11px 12px; color: #718078; background: #f5f8f4; border-bottom: 1px solid var(--line); font-size: 10px; font-weight: 700; text-transform: uppercase; }
+    .data-table td { padding: 12px; color: #26342d; border-bottom: 1px solid var(--line); vertical-align: middle; }
+    .data-table tr:last-child td { border-bottom: 0; }
+    .data-table .text-btn { white-space: nowrap; }
+    .empty-state { padding: 19px 0; color: var(--muted); font-size: 13px; }
+    .success-message { margin: 12px 0 0; color: var(--green); font-size: 12px; }
+    .privacy-warning { margin: 15px 0; padding: 13px 15px; color: #604c1d; background: #f8f1d8; font-size: 12px; line-height: 1.5; }
+    .report-values { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .report-values .value-item { justify-content: space-between; }
+    .report-values strong { color: var(--green-dark); font-size: 13px; }
+    .comment-list { display: grid; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
+    .comment-list li { padding: 12px 14px; color: #3a4941; background: #f5f8f4; border-left: 2px solid var(--coral); font-size: 12px; line-height: 1.6; }
+    .comment-field { margin-top: 22px; }
+    .assessment-page { width: min(100%, 850px); margin: 0 auto; padding-top: 8px; }
+    .assessment-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .text-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 0; color: #64736a; background: none; border: 0; font-size: 11px; font-weight: 700; }
+    .text-btn:hover { color: var(--green); }
+    .save-label { color: #859188; font-size: 10px; }
+    .progress-head { display: flex; justify-content: space-between; margin-bottom: 9px; color: #67766d; font-size: 11px; font-weight: 600; }
+    .progress-track { height: 5px; overflow: hidden; background: #dfe8e1; border-radius: 10px; }
+    .progress-fill { height: 100%; background: var(--coral); transition: width .3s ease; }
+    .question-panel { margin-top: 42px; padding: clamp(24px, 5vw, 54px); background: #fff; border: 1px solid var(--line); border-radius: 4px; }
+    .question-overline { display: flex; align-items: center; gap: 10px; color: var(--green); font-size: 10px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; }
+    .question-dot { width: 8px; height: 8px; background: var(--coral); border-radius: 50%; }
+    .question-panel h1 { max-width: 680px; min-height: 84px; margin: 25px 0 29px; font-family: Manrope, sans-serif; font-size: 24px; font-weight: 500; line-height: 1.4; letter-spacing: 0; }
+    .answer-list { display: grid; gap: 9px; margin: 0; padding: 0; border: 0; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+    .answer-option { display: flex; align-items: center; min-height: 56px; padding: 11px 14px; gap: 13px; color: #26342d; background: #fafcf9; border: 1px solid #e2e9e3; border-radius: 3px; cursor: pointer; font-size: 14px; font-weight: 500; line-height: 1.45; transition: border-color .15s, background .15s; }
+    .answer-option:hover { border-color: #9cb8a7; }
+    .answer-option.selected { color: #18382c; background: var(--mint); border-color: var(--green); }
+    .answer-option input { flex: 0 0 20px; width: 20px; height: 20px; margin: 0; accent-color: var(--green); }
+    .answer-number { display: grid; place-items: center; flex: 0 0 24px; width: 24px; height: 24px; color: #26342d; background: #e9f1eb; border-radius: 50%; font-size: 11px; font-weight: 700; }
+    .question-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 27px; padding-top: 21px; border-top: 1px solid #edf1ed; }
+    .back-btn { padding: 12px 0; color: #728078; background: none; border: 0; font-size: 11px; font-weight: 700; }
+    .next-btn { display: inline-flex; align-items: center; justify-content: center; gap: 14px; min-width: 144px; min-height: 44px; padding: 0 16px; color: #fff; background: var(--green); border: 0; border-radius: 3px; font-size: 11px; font-weight: 700; }
+    .next-btn:disabled { cursor: not-allowed; opacity: .4; }
+    .completion { max-width: 620px; margin: clamp(45px, 10vh, 100px) auto; padding: 46px; background: #fff; border: 1px solid var(--line); text-align: center; }
+    .completion-mark { display: grid; place-items: center; width: 58px; height: 58px; margin: 0 auto 22px; color: var(--green-dark); background: var(--yellow); border-radius: 50%; font-size: 26px; font-weight: 700; }
+    .completion h1 { margin-bottom: 12px; font-family: Manrope, sans-serif; font-size: 31px; letter-spacing: 0; }
+    .completion p { max-width: 450px; margin: 0 auto 24px; color: #708077; font-size: 13px; line-height: 1.7; }
+    .completion .primary-btn { width: auto; min-width: 180px; margin: 0 auto; }
+    .notice { margin-top: 20px !important; padding: 12px; background: #f4f7f1; font-size: 10px !important; }
+    @media (max-width: 900px) {
+      .login-page { grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px; }
+      .brand-panel { min-height: 600px; padding: 34px; }
+      .login-side { padding: 20px; }
+      .workspace { grid-template-columns: 175px minmax(0, 1fr); gap: 25px; }
+      .value-list { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 680px) {
+      .login-page { display: block; min-height: 100vh; padding: 0; background: #fff; }
+      .brand-panel { display: none; }
+      .login-side { min-height: 100vh; min-height: 100dvh; padding: max(25px, env(safe-area-inset-top)) max(25px, env(safe-area-inset-right)) max(25px, env(safe-area-inset-bottom)) max(25px, env(safe-area-inset-left)); }
+      .login-card { padding: 24px 0; }
+      .mobile-brand { display: flex; margin-bottom: 48px; }
+      .login-card h2 { font-size: 30px; }
+      .topbar { height: 65px; padding: 0 max(18px, env(safe-area-inset-right)) 0 max(18px, env(safe-area-inset-left)); }
+      .topbar .brand-sub { display: none; }
+      .profile-name { max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .workspace { display: block; min-height: calc(100vh - 65px); min-height: calc(100dvh - 65px); padding: 20px max(18px, env(safe-area-inset-right)) max(42px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left)); }
+      .sidebar { display: flex; padding: 0 0 22px; gap: 8px; }
+      .side-label, .side-note { display: none; }
+      .side-link { justify-content: center; width: auto; min-height: 36px; margin: 0; padding: 0 12px; font-size: 10px; }
+      .side-icon { display: none; }
+      .welcome-row { align-items: flex-start; flex-direction: column; margin: 8px 0 22px; gap: 4px; }
+      .welcome-row h1 { font-size: 28px; }
+      .date-label { display: none; }
+      .assessment-banner { grid-template-columns: 1fr; min-height: 0; }
+      .banner-copy { padding: 25px 22px; }
+      .banner-copy h2 { font-size: 22px; }
+      .banner-art { display: none; }
+      .value-section { margin-top: 27px; }
+      .value-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .value-item { min-height: 66px; padding: 11px 9px; gap: 8px; }
+      .value-number { flex-basis: 26px; width: 26px; }
+      .value-title { font-size: 10px; }
+      .assessment-page { padding-top: 0; }
+      .assessment-controls { margin-bottom: 24px; }
+      .question-panel { margin-top: 29px; padding: 24px 18px 17px; }
+      .question-panel h1 { min-height: 0; margin: 20px 0 26px; font-size: 21px; }
+      .answer-list { gap: 8px; }
+      .answer-option { min-height: 56px; padding: 10px 12px; }
+      .workflow-section { margin-top: 24px; padding-top: 18px; }
+      .cycle-form, .plan-form { grid-template-columns: 1fr; }
+      .peer-selection { grid-column: auto; }
+      .peer-options label { flex: 1 1 100%; }
+      .report-values { grid-template-columns: 1fr; }
+      .data-table { min-width: 590px; }
+      .question-footer { margin-top: 20px; }
+      .next-btn { min-width: 126px; }
+      .completion { margin: 44px 0; padding: 34px 20px; }
+      .completion h1 { font-size: 27px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div id="app" class="shell">
+    <section v-if="view === 'login'" class="login-page">
+      <aside class="brand-panel">
+        <div class="brand-lockup">
+          <div class="brand-mark"><img src="assets/ib-group-logo.webp" alt=""></div>
+          <div class="brand-name">IB GROUP<span class="brand-sub">EMPLOYEE360</span></div>
+        </div>
+        <div class="brand-copy">
+          <div class="eyebrow">People. Values. Progress.</div>
+          <h1>Better work<br>starts with<br>self-awareness.</h1>
+          <p>A thoughtful moment to reflect on the values that shape how we work, grow and succeed together.</p>
+        </div>
+        <div class="brand-foot">IB Group · Employee360</div>
+      </aside>
+      <main class="login-side">
+        <form class="login-card" @submit.prevent="signIn">
+          <div class="brand-lockup mobile-brand">
+            <div class="brand-mark"><img src="assets/ib-group-logo.webp" alt=""></div>
+            <div class="brand-name">IB GROUP<span class="brand-sub">EMPLOYEE360</span></div>
+          </div>
+          <div class="form-kicker">Employee portal</div>
+          <h2>Welcome back</h2>
+          <p class="form-intro">Sign in to continue to your Employee360 workspace.</p>
+          <div class="field">
+            <label for="employee-name">Name</label>
+            <input id="employee-name" v-model.trim="employeeName" autocomplete="name" placeholder="Enter your name" required>
+          </div>
+          <div class="field">
+            <label for="mobile-number">Password <span class="field-hint">Your registered mobile number</span></label>
+            <div class="input-wrap">
+              <input id="mobile-number" v-model="mobileNumber" :type="showPassword ? 'tel' : 'password'" inputmode="numeric" autocomplete="current-password" maxlength="10" pattern="[0-9]{10}" placeholder="10-digit mobile number" class="password-input" required>
+              <button type="button" class="show-password" @click="showPassword = !showPassword" :aria-label="showPassword ? 'Hide password' : 'Show password'">{{ showPassword ? 'Hide' : 'Show' }}</button>
+            </div>
+          </div>
+          <p v-if="loginError" class="error-message" role="alert">{{ loginError }}</p>
+          <p v-if="questionsError" class="error-message" role="alert">{{ questionsError }}</p>
+          <button type="submit" class="primary-btn" :disabled="questionsLoading || !questions.length">{{ questionsLoading ? 'Loading questions...' : 'Sign in' }} <span class="arrow">→</span></button>
+          <button v-if="questionsError" type="button" class="text-btn" @click="loadQuestions">Retry connection</button>
+          <div class="privacy-note"><span class="privacy-dot"></span><span>Your mobile number is used to sign in and is stored only as a password hash. Feedback visibility depends on your role and rater group.</span></div>
+        </form>
+      </main>
+    </section>
+
+    <section v-else class="app-layout">
+      <header class="topbar">
+        <div class="topbar-brand">
+          <div class="brand-mark"><img src="assets/ib-group-logo.webp" alt=""></div>
+          <div class="brand-name">IB GROUP<span class="brand-sub">EMPLOYEE360</span></div>
+        </div>
+        <div class="profile"><div class="avatar">{{ initials }}</div><div><span class="profile-name">{{ employee.name }}</span><span class="profile-role">{{ employee.role }}</span></div><button class="text-btn" @click="signOut">Sign out</button></div>
+      </header>
+      <div class="workspace">
+        <aside class="sidebar">
+          <div class="side-label">Workspace</div>
+          <button class="side-link" :class="{ active: view === 'dashboard' }" @click="goDashboard"><span class="side-icon">⌂</span>Overview</button>
+          <button class="side-link" :class="{ active: view === 'inbox' }" @click="openInbox"><span class="side-icon">☷</span>Review inbox</button>
+          <button class="side-link" :class="{ active: view === 'report' }" @click="openOwnReport"><span class="side-icon">▤</span>My report</button>
+          <div class="side-note">Peer and direct-report feedback is hidden until at least {{ anonymityThreshold }} people respond. Comments may still be identifiable from context.</div>
+        </aside>
+        <main class="main-content">
+          <template v-if="view === 'dashboard'">
+            <div class="welcome-row"><div><h1>Hello, {{ firstName }}</h1><p>{{ employee.role === 'hr_admin' ? 'Manage review cycles and monitor participation.' : 'Complete your assigned reviews and reflect on your feedback.' }}</p></div><div class="date-label">IB Group · People & Culture</div></div>
+            <template v-if="employee.role === 'hr_admin'">
+              <section class="workflow-section">
+                <div class="section-heading"><h3>Start a review cycle</h3><span>Managers and direct reports follow employee links</span></div>
+                <form class="cycle-form" @submit.prevent="createCycle">
+                  <label>Cycle name<input v-model.trim="cycleForm.name" required minlength="3" maxlength="120" placeholder="2026 annual review"></label>
+                  <label>Opens<input v-model="cycleForm.startsOn" type="date" required></label>
+                  <label>Closes<input v-model="cycleForm.endsOn" type="date" required></label>
+                  <button class="start-btn" type="submit" :disabled="saving">{{ saving ? 'Creating...' : 'Create cycle' }}</button>
+                  <div class="peer-selection">
+                    <div class="section-heading"><h3>Peer reviewers by employee</h3><span>Select at least 3 where possible for anonymous peer summaries</span></div>
+                    <fieldset v-for="person in employees" :key="person.employeeId" class="peer-subject">
+                      <legend>{{ person.name }} <span>{{ selectedPeerCount(person.employeeId) }} selected</span></legend>
+                      <div class="peer-options">
+                        <label v-for="reviewer in peerCandidates(person)" :key="reviewer.employeeId"><input v-model="cycleForm.peerReviewers[person.employeeId]" type="checkbox" :value="reviewer.employeeId"><span>{{ reviewer.name }}<small>{{ reviewer.department }}</small></span></label>
+                      </div>
+                      <p v-if="selectedPeerCount(person.employeeId) < anonymityThreshold" class="peer-hint">Peer feedback will remain hidden until at least {{ anonymityThreshold }} selected reviewers submit.</p>
+                    </fieldset>
+                  </div>
+                </form>
+                <p v-if="adminMessage" class="success-message" role="status">{{ adminMessage }}</p>
+                <p v-if="adminError" class="error-message" role="alert">{{ adminError }}</p>
+              </section>
+              <section class="workflow-section">
+                <div class="section-heading"><h3>Review cycles</h3><span>{{ cycles.length }} total</span></div>
+                <div class="table-scroll"><table class="data-table"><thead><tr><th>Cycle</th><th>Window</th><th>Status</th><th>Progress</th></tr></thead><tbody>
+                  <tr v-for="cycle in cycles" :key="cycle.cycleId"><td>{{ cycle.name }}</td><td>{{ cycle.startsOn }} to {{ cycle.endsOn }}</td><td>{{ cycle.status }}</td><td><button class="text-btn" @click="loadCycleProgress(cycle)">View progress</button></td></tr>
+                </tbody></table></div>
+              </section>
+              <section class="workflow-section">
+                <div class="section-heading"><h3>Employee reports</h3><span>HR administrator access</span></div>
+                <label class="inline-field">Cycle<select v-model="selectedCycleId"><option v-for="cycle in cycles" :key="cycle.cycleId" :value="cycle.cycleId">{{ cycle.name }}</option></select></label>
+                <div class="table-scroll"><table class="data-table"><thead><tr><th>Employee</th><th>Department</th><th>Role</th><th></th></tr></thead><tbody>
+                  <tr v-for="person in employees" :key="person.employeeId"><td>{{ person.name }}</td><td>{{ person.department }}</td><td>{{ person.role }}</td><td><button class="text-btn" :disabled="!selectedCycleId" @click="openReport(person.employeeId, selectedCycleId)">Open report</button></td></tr>
+                </tbody></table></div>
+              </section>
+            </template>
+            <template v-else>
+              <section class="workflow-section">
+                <div class="section-heading"><h3>Reviews to complete</h3><span>{{ assignments.filter(item => item.status === 'pending').length }} pending</span></div>
+                <div v-if="!assignments.length" class="empty-state">No review assignments yet. Your HR administrator can start a review cycle.</div>
+                <div v-else class="table-scroll"><table class="data-table"><thead><tr><th>Cycle</th><th>Employee</th><th>Relationship</th><th>Due</th><th>Status</th><th></th></tr></thead><tbody>
+                  <tr v-for="assignment in assignments" :key="assignment.assignmentId"><td>{{ assignment.cycleName }}</td><td>{{ assignment.subject.name }}</td><td>{{ formatRelationship(assignment.relationship) }}</td><td>{{ assignment.dueOn }}</td><td>{{ assignment.status }}</td><td><button class="text-btn" :disabled="assignment.status !== 'pending'" @click="openAssignment(assignment)">{{ assignment.status === 'pending' ? 'Give feedback' : 'Submitted' }}</button></td></tr>
+                </tbody></table></div>
+              </section>
+              <section class="workflow-section">
+                <div class="section-heading"><h3>360 reports</h3><span>Reviewer names are not shown</span></div>
+                <label class="inline-field">Cycle<select v-model="selectedCycleId"><option v-for="cycle in cycles" :key="cycle.cycleId" :value="cycle.cycleId">{{ cycle.name }}</option></select></label>
+                <button class="start-btn" :disabled="!selectedCycleId" @click="openOwnReport">Open my report</button>
+                <div v-if="directReports.length" class="table-scroll report-list"><table class="data-table"><thead><tr><th>Direct report</th><th>Department</th><th></th></tr></thead><tbody>
+                  <tr v-for="person in directReports" :key="person.employeeId"><td>{{ person.name }}</td><td>{{ person.department }}</td><td><button class="text-btn" :disabled="!selectedCycleId" @click="openReport(person.employeeId, selectedCycleId)">Open report</button></td></tr>
+                </tbody></table></div>
+              </section>
+            </template>
+          </template>
+          <template v-else-if="view === 'inbox'">
+            <div class="welcome-row"><div><h1>Review inbox</h1><p>Complete each review while its cycle is open.</p></div><div class="date-label">{{ assignments.filter(item => item.status === 'pending').length }} pending</div></div>
+            <section class="workflow-section">
+              <div v-if="!assignments.length" class="empty-state">No review assignments yet. Ask HR to include you in an open review cycle.</div>
+              <div v-else class="table-scroll"><table class="data-table"><thead><tr><th>Cycle</th><th>Employee</th><th>Relationship</th><th>Due</th><th>Status</th><th></th></tr></thead><tbody>
+                <tr v-for="assignment in assignments" :key="assignment.assignmentId"><td>{{ assignment.cycleName }}</td><td>{{ assignment.subject.name }}</td><td>{{ formatRelationship(assignment.relationship) }}</td><td>{{ assignment.dueOn }}</td><td>{{ assignment.status }}</td><td><button class="text-btn" :disabled="assignment.status !== 'pending'" @click="openAssignment(assignment)">{{ assignment.status === 'pending' ? 'Give feedback' : 'Submitted' }}</button></td></tr>
+              </tbody></table></div>
+            </section>
+          </template>
+          <template v-else-if="view === 'review' && currentAssignment">
+            <div class="assessment-page">
+              <div class="assessment-controls"><button class="text-btn" @click="openInbox">← Back to inbox</button><span class="save-label">{{ formatRelationship(currentAssignment.relationship) }} feedback · {{ currentAssignment.cycleName }}</span></div>
+              <div class="progress-head"><span>Question {{ questionIndex + 1 }} of {{ currentAssignment.questions.length }}</span><span>{{ Math.round((reviewAnsweredCount / currentAssignment.questions.length) * 100) }}% complete</span></div>
+              <div class="progress-track" role="progressbar" :aria-valuenow="reviewAnsweredCount" :aria-valuemin="0" :aria-valuemax="currentAssignment.questions.length" aria-label="Review progress"><div class="progress-fill" :style="{ width: `${(reviewAnsweredCount / currentAssignment.questions.length) * 100}%` }"></div></div>
+              <article class="question-panel">
+                <div class="question-overline"><span class="question-dot"></span>{{ currentReviewQuestion.value }} · Feedback for {{ currentAssignment.subject.name }}</div>
+                <h1>{{ currentReviewQuestion.text }}</h1>
+                <fieldset class="answer-list"><legend class="sr-only">Choose your response</legend>
+                  <label v-for="(option, index) in answerOptions" :key="option" class="answer-option" :class="{ selected: reviewAnswers[questionIndex] === index + 1 }"><input type="radio" :name="`review-question-${questionIndex}`" :value="index + 1" v-model="reviewAnswers[questionIndex]"><span class="answer-number">{{ index + 1 }}</span><span>{{ option }}</span></label>
+                </fieldset>
+                <label class="comment-field">Optional feedback<textarea v-model="reviewComment" maxlength="2000" rows="3" placeholder="Share a specific observation or example. Avoid including sensitive personal details."></textarea></label>
+                <p v-if="reviewError" class="error-message" role="alert">{{ reviewError }}</p>
+                <div class="question-footer"><button class="back-btn" :disabled="questionIndex === 0" @click="questionIndex--">← Previous</button><button class="next-btn" :disabled="!reviewAnswers[questionIndex] || saving" @click="nextReviewQuestion">{{ saving ? 'Saving...' : questionIndex === currentAssignment.questions.length - 1 ? 'Submit feedback' : 'Next question' }} →</button></div>
+              </article>
+            </div>
+          </template>
+          <template v-else-if="view === 'report' && report">
+            <div class="assessment-controls"><button class="text-btn" @click="goDashboard">← Back</button><span class="save-label">{{ report.cycle.name }}</span></div>
+            <div class="welcome-row"><div><h1>{{ report.subject.name }}</h1><p>{{ report.subject.department }} · 360 feedback summary</p></div></div>
+            <p class="privacy-warning">Peer and direct-report groups are hidden below {{ report.anonymityThreshold }} responses. Group comments may still be identifiable from context.</p>
+            <section v-for="section in report.sections" :key="section.relationship" class="workflow-section">
+              <div class="section-heading"><h3>{{ formatRelationship(section.relationship) }}</h3><span v-if="section.available">{{ section.reviewerCount }} response{{ section.reviewerCount === 1 ? '' : 's' }}</span></div>
+              <p v-if="!section.available" class="empty-state">{{ section.message }}</p>
+              <template v-else>
+                <div class="value-list report-values"><div v-for="(rating, category) in section.categoryAverages" :key="category" class="value-item"><span class="value-title">{{ category }}</span><strong>{{ rating }} / 5</strong></div></div>
+                <ul v-if="section.comments.length" class="comment-list"><li v-for="(comment, index) in section.comments" :key="index">{{ comment }}</li></ul>
+              </template>
+            </section>
+            <section v-if="report.subject.employeeId === employee.employeeId" class="workflow-section">
+              <div class="section-heading"><h3>Development plan</h3><span>Set a follow-up action</span></div>
+              <form class="plan-form" @submit.prevent="createActionPlan">
+                <label>Value area<select v-model="planForm.category" required><option v-for="value in values" :key="value" :value="value">{{ value }}</option></select></label>
+                <label>Goal<textarea v-model.trim="planForm.goal" required minlength="3" maxlength="500" rows="2" placeholder="Describe a practical next step"></textarea></label>
+                <label>Target date<input v-model="planForm.dueOn" type="date" required></label>
+                <button class="start-btn" type="submit" :disabled="saving || !report.cycle.cycleId">Add goal</button>
+              </form>
+              <div v-if="actionPlanError" class="error-message" role="alert">{{ actionPlanError }}</div>
+              <div class="table-scroll"><table class="data-table"><thead><tr><th>Area</th><th>Goal</th><th>Target date</th><th>Status</th><th></th></tr></thead><tbody>
+                <tr v-for="plan in actionPlans" :key="plan.planId"><td>{{ plan.category }}</td><td>{{ plan.goal }}</td><td>{{ plan.dueOn }}</td><td>{{ plan.status }}</td><td><button v-if="plan.status === 'open'" class="text-btn" @click="updateActionPlan(plan)">Mark complete</button></td></tr>
+              </tbody></table></div>
+            </section>
+          </template>
+          <template v-else-if="view === 'progress' && cycleProgress">
+            <div class="assessment-controls"><button class="text-btn" @click="goDashboard">← Back</button></div>
+            <div class="welcome-row"><div><h1>{{ cycleProgress.cycle.name }}</h1><p>{{ cycleProgress.summary.submitted }} of {{ cycleProgress.summary.total }} assignments submitted</p></div></div>
+            <div class="table-scroll"><table class="data-table"><thead><tr><th>Rater group</th><th>Submitted</th><th>Pending</th></tr></thead><tbody>
+              <tr v-for="(counts, relationship) in cycleProgress.byRelationship" :key="relationship"><td>{{ formatRelationship(relationship) }}</td><td>{{ counts.submitted }}</td><td>{{ counts.pending }}</td></tr>
+            </tbody></table></div>
+          </template>
+        </main>
+      </div>
+    </section>
+  </div>
+  <script>
+    const { createApp } = Vue;
+    createApp({
+      data() {
+        const today = new Date();
+        const dateString = date => date.toISOString().slice(0, 10);
+        const endDate = new Date(today);
+        endDate.setDate(endDate.getDate() + 30);
+        return {
+          view: 'login', employee: null, employeeName: '', mobileNumber: '', showPassword: false, loginError: '',
+          questionsError: '', questionsLoading: true, saving: false, reviewError: '', adminError: '', adminMessage: '', actionPlanError: '',
+          questions: [], values: [], cycles: [], assignments: [], employees: [], directReports: [],
+          currentAssignment: null, reviewAnswers: [], reviewComment: '', questionIndex: 0,
+          selectedCycleId: '', report: null, cycleProgress: null, actionPlans: [],
+          cycleForm: { name: '', startsOn: dateString(today), endsOn: dateString(endDate), peerReviewers: {} },
+          planForm: { category: '', goal: '', dueOn: dateString(endDate) },
+          answerOptions: ['Strongly disagree', 'Disagree', 'Neither agree nor disagree', 'Agree', 'Strongly agree']
+        };
+      },
+      created() { this.bootstrap(); },
+      computed: {
+        firstName() { return this.employee?.name?.trim().split(/\s+/)[0] || 'there'; },
+        initials() { return this.employee?.name?.trim().split(/\s+/).slice(0, 2).map(part => part[0]).join('').toUpperCase() || 'IB'; },
+        anonymityThreshold() { return 3; },
+        reviewAnsweredCount() { return this.reviewAnswers.filter(answer => answer !== null).length; },
+        currentReviewQuestion() { return this.currentAssignment?.questions?.[this.questionIndex] || null; }
+      },
+      methods: {
+        async bootstrap() {
+          await this.loadQuestions();
+          try {
+            const response = await fetch('/api/me');
+            if (response.ok) {
+              const result = await response.json();
+              this.employee = result.employee;
+              this.view = result.employee.role === 'hr_admin' ? 'dashboard' : 'inbox';
+              await this.loadDashboard();
+            }
+          } catch (error) {
+            this.loginError = '';
+          }
+        },
+        async loadQuestions() {
+          this.questionsLoading = true;
+          this.questionsError = '';
+          try {
+            const response = await fetch('/api/questions');
+            const questions = await response.json();
+            if (!response.ok || !Array.isArray(questions) || questions.length === 0) {
+              throw new Error('Question service returned an invalid response.');
+            }
+            this.questions = questions;
+            this.values = [...new Set(questions.map((question) => question.value))];
+            this.planForm.category = this.values[0] || '';
+          } catch (error) {
+            this.questionsError = 'Unable to load assessment questions. Check the server and MongoDB, then retry.';
+          } finally {
+            this.questionsLoading = false;
+          }
+        },
+        async signIn() {
+          if (!this.questions.length) return;
+          if (!/^\d{10}$/.test(this.mobileNumber)) {
+            this.loginError = 'Enter a valid 10-digit mobile number.';
+            return;
+          }
+          this.loginError = '';
+          try {
+            const response = await fetch('/api/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ employeeName: this.employeeName.trim(), mobileNumber: this.mobileNumber })
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || result.detail || 'Name or password is incorrect.');
+            this.employee = result.employee;
+            this.view = result.employee.role === 'hr_admin' ? 'dashboard' : 'inbox';
+            await this.loadDashboard();
+          } catch (error) {
+            this.loginError = error.message || 'Unable to sign in.';
+          } finally {
+            this.mobileNumber = '';
+          }
+        },
+        async signOut() {
+          await fetch('/api/logout', { method: 'POST' }).catch(() => {});
+          this.employee = null;
+          this.assignments = [];
+          this.view = 'login';
+        },
+        async loadDashboard() {
+          if (!this.employee) return;
+          try {
+            const [assignmentsResponse, cyclesResponse] = await Promise.all([
+              fetch('/api/my/assignments'),
+              fetch('/api/review-cycles')
+            ]);
+            if (assignmentsResponse.ok) this.assignments = await assignmentsResponse.json();
+            if (cyclesResponse.ok) this.cycles = await cyclesResponse.json();
+            if (!this.cycles.some(cycle => cycle.cycleId === this.selectedCycleId)) {
+              this.selectedCycleId = this.cycles[0]?.cycleId || '';
+            }
+            if (this.employee.role === 'hr_admin') {
+              const employeeResponse = await fetch('/api/employees');
+              if (employeeResponse.ok) {
+                this.employees = await employeeResponse.json();
+                const peerReviewers = { ...this.cycleForm.peerReviewers };
+                for (const person of this.employees) {
+                  if (!(person.employeeId in peerReviewers)) {
+                    peerReviewers[person.employeeId] = this.peerCandidates(person).map(reviewer => reviewer.employeeId);
+                  }
+                }
+                this.cycleForm.peerReviewers = peerReviewers;
+              }
+            }
+            if (['manager', 'hr_admin'].includes(this.employee.role)) {
+              const reportResponse = await fetch('/api/management/direct-reports');
+              if (reportResponse.ok) this.directReports = await reportResponse.json();
+            }
+          } catch (error) {
+            this.adminError = 'Could not load review data. Check your connection and try again.';
+          }
+        },
+        async createCycle() {
+          this.saving = true;
+          this.adminError = '';
+          this.adminMessage = '';
+          try {
+            const response = await fetch('/api/review-cycles', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(this.cycleForm)
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || result.detail || 'Could not create review cycle.');
+            this.adminMessage = `Cycle created with ${Object.values(result.assignmentCounts).reduce((total, count) => total + count, 0)} assignments.`;
+            this.cycleForm.name = '';
+            await this.loadDashboard();
+          } catch (error) {
+            this.adminError = error.message || 'Could not create review cycle.';
+          } finally {
+            this.saving = false;
+          }
+        },
+        async loadCycleProgress(cycle) {
+          try {
+            const response = await fetch(`/api/review-cycles/${encodeURIComponent(cycle.cycleId)}/progress`);
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || result.detail || 'Could not load cycle progress.');
+            this.cycleProgress = result;
+            this.view = 'progress';
+          } catch (error) {
+            this.adminError = error.message;
+          }
+        },
+        async openAssignment(assignment) {
+          this.reviewError = '';
+          try {
+            const response = await fetch(`/api/assignments/${encodeURIComponent(assignment.assignmentId)}`);
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || result.detail || 'Could not open this assignment.');
+            if (!result.isOpen) throw new Error('This review is outside its response window.');
+            this.currentAssignment = result;
+            this.reviewAnswers = Array(result.questions.length).fill(null);
+            this.reviewComment = '';
+            this.questionIndex = 0;
+            this.view = 'review';
+          } catch (error) {
+            this.reviewError = error.message;
+          }
+        },
+        async nextReviewQuestion() {
+          if (!this.reviewAnswers[this.questionIndex] || this.saving) return;
+          if (this.questionIndex < this.currentAssignment.questions.length - 1) {
+            this.questionIndex += 1;
+            return;
+          }
+          this.saving = true;
+          this.reviewError = '';
+          try {
+            const response = await fetch(`/api/assignments/${encodeURIComponent(this.currentAssignment.assignmentId)}/responses`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                answers: this.currentAssignment.questions.map((question, index) => ({ questionId: question.id, value: this.reviewAnswers[index] })),
+                comment: this.reviewComment
+              })
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || result.detail || 'Could not submit feedback.');
+            this.view = 'inbox';
+            this.currentAssignment = null;
+            await this.loadDashboard();
+          } catch (error) {
+            this.reviewError = error.message;
+          } finally {
+            this.saving = false;
+          }
+        },
+        async openOwnReport() {
+          if (this.selectedCycleId && this.employee) await this.openReport(this.employee.employeeId, this.selectedCycleId);
+        },
+        async openReport(subjectId, cycleId) {
+          if (!cycleId) return;
+          this.actionPlanError = '';
+          try {
+            const response = await fetch(`/api/reports/${encodeURIComponent(cycleId)}/${encodeURIComponent(subjectId)}`);
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || result.detail || 'Could not open report.');
+            this.report = result;
+            this.actionPlans = [];
+            if (subjectId === this.employee.employeeId) {
+              const plansResponse = await fetch(`/api/action-plans?cycleId=${encodeURIComponent(cycleId)}`);
+              if (plansResponse.ok) this.actionPlans = await plansResponse.json();
+            }
+            this.planForm.cycleId = cycleId;
+            this.planForm.category = this.values[0] || '';
+            this.view = 'report';
+          } catch (error) {
+            this.adminError = error.message;
+          }
+        },
+        async createActionPlan() {
+          this.saving = true;
+          this.actionPlanError = '';
+          try {
+            const response = await fetch('/api/action-plans', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ...this.planForm, cycleId: this.report.cycle.cycleId })
+            });
+            const result = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(result.error || result.detail || 'Could not save action plan.');
+            this.actionPlans.unshift(result);
+            this.planForm.goal = '';
+          } catch (error) {
+            this.actionPlanError = error.message;
+          } finally {
+            this.saving = false;
+          }
+        },
+        async updateActionPlan(plan) {
+          const response = await fetch(`/api/action-plans/${encodeURIComponent(plan.planId)}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'completed' })
+          });
+          if (!response.ok) {
+            this.actionPlanError = 'Could not update this development goal.';
+            return;
+          }
+          plan.status = 'completed';
+        },
+        formatRelationship(relationship) {
+          return ({ self: 'Self', manager: 'Manager', peer: 'Peer', direct_report: 'Direct report' })[relationship] || relationship;
+        },
+        peerCandidates(person) {
+          return this.employees.filter(reviewer =>
+            reviewer.employeeId !== person.employeeId
+            && reviewer.role !== 'hr_admin'
+            && reviewer.employeeId !== person.managerId
+            && reviewer.managerId !== person.employeeId
+          );
+        },
+        selectedPeerCount(employeeId) {
+          return this.cycleForm.peerReviewers[employeeId]?.length || 0;
+        },
+        goDashboard() {
+          this.view = 'dashboard';
+          this.reviewError = '';
+          this.currentAssignment = null;
+          this.loadDashboard();
+        },
+        openInbox() {
+          this.view = 'inbox';
+          this.currentAssignment = null;
+          this.loadDashboard();
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
